@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>YES/NO QUIZ · 223 UNIQUE · PAGED · SOUND & COLOR</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0a2e3b, #1a4a5f, #0f2c36);
+      font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+      padding: 1.2rem;
+      min-height: 100vh;
+    }
+
+    .master-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* header */
+    .hero {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, #FFE6B0, #FFA559);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .stats-badge {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: #0a2e3b;
+      padding: 4px 14px;
+      border-radius: 40px;
+      color: #FFD966;
+      font-size: 0.75rem;
+    }
+
+    /* navigation toolbar */
+    .nav-bar {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 60px;
+      padding: 0.6rem 1.2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .page-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .page-btn {
+      background: #eef2fa;
+      border: none;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      color: #1a5a6e;
+    }
+
+    .page-btn.active {
+      background: #dc4c2c;
+      color: white;
+    }
+
+    .sound-toggle {
+      background: #2c3e50;
+      border: none;
+      color: white;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .global-score {
+      background: #1b4e60;
+      padding: 6px 20px;
+      border-radius: 40px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    /* page container */
+    .page {
+      display: none;
+      animation: fade 0.25s ease;
+    }
+
+    .page.active-page {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* question cards */
+    .q-card {
+      background: white;
+      border-radius: 1.2rem;
+      padding: 0.9rem 1.2rem;
+      margin-bottom: 0.9rem;
+      border-left: 6px solid #3498db;
+      transition: 0.15s;
+    }
+
+    .q-card.correct {
+      background: #d4edda;
+      border-left-color: #28a745;
+    }
+
+    .q-card.wrong {
+      background: #f8d7da;
+      border-left-color: #dc3545;
+    }
+
+    .q-text {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: #0a2e3b;
+    }
+
+    .options {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f2f6fc;
+      padding: 4px 16px;
+      border-radius: 50px;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      accent-color: #dc4c2c;
+      width: 1rem;
+      height: 1rem;
+      cursor: pointer;
+    }
+
+    /* page footer */
+    .page-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      border-radius: 60px;
+      padding: 0.6rem 1.2rem;
+    }
+
+    .page-score {
+      background: #124c5e;
+      padding: 5px 18px;
+      border-radius: 40px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .nav-btn {
+      background: #dc4c2c;
+      border: none;
+      color: white;
+      padding: 6px 24px;
+      border-radius: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* final result */
+    .final-panel {
+      background: linear-gradient(135deg, #fff5e6, #ffefdb);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .final-score {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #28a745;
+    }
+
+    button {
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.02);
+      opacity: 0.9;
+    }
+
+    @media (max-width: 650px) {
+      .q-text { font-size: 0.8rem; }
+      .opt { padding: 2px 10px; }
+    }
+
+    /* license modal */
+    .license-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .license-card {
+      background: white;
+      max-width: 500px;
+      width: 90%;
+      border-radius: 2rem;
+      padding: 1.8rem;
+      text-align: center;
+      direction: rtl;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .license-card h2 {
+      color: #dc4c2c;
+      margin-bottom: 1rem;
+    }
+    .license-card p {
+      text-align: right;
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .license-accept-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="master-container">
+  <div class="hero">
+    <h1>🎯 YES/NO Quiz · Hassan Aljaboobj - 223 QUESTIONS 🎯</h1>
+    <div class="stats-badge">
+      <span class="badge">📖 9 pages×25 questions</span>
+      <span class="badge">🎵High tone for error and soft for right</span>
+      <span class="badge">✅ green  / ❌ red</span>
+    </div>
+  </div>
+
+  <div class="nav-bar" id="navBar">
+    <div class="page-buttons" id="pageButtons"></div>
+    <div style="display: flex; gap: 10px;">
+      <button id="soundToggleBtn" class="sound-toggle">🔊 Sound ON</button>
+      <div class="global-score" id="globalScoreSpan">🏆 Total: 0 / 264</div>
+    </div>
+  </div>
+
+  <div id="pagesContainer"></div>
+  <div id="finalResultArea"></div>
+  <div id="licenseModal" style="display:none;"></div>
+</div>
+
+<script>
+  // --------------------------------------------------------------
+  // 264 UNIQUE QUESTIONS - FULL CONTENT
+  // --------------------------------------------------------------
+  const FULL_SET = [
+    { text: "Is the ball perfectly round in shape?", correct: true },
+    { text: "Is it possible to crossbreed between a cat and a dog?", correct: false },
+    { text: "Are magazines and books made of metal?", correct: false },
+    { text: "Does 'plenty' mean too much?", correct: true },
+    { text: "Are twins sisters or brothers who were born together?", correct: true },
+    { text: "Will you find a valley between two hills?", correct: true },
+    { text: "Is a frog covered in feather?", correct: false },
+    { text: "Is a mare the female horse?", correct: true },
+    { text: "Is a mule a cross between a camel and donkey?", correct: false },
+    { text: "Is a dress made of cloth?", correct: true },
+    { text: "Is a chicken's beak in its wings?", correct: false },
+    { text: "Is distance measured by the Richter scale?", correct: false },
+    { text: "Does a djambia have a curved blade?", correct: true },
+    { text: "If somebody tells you bad news, do you say 'calm down'?", correct: false },
+    { text: "Can we see clearly on a misty day?", correct: false },
+    { text: "Is a liger a cross between a lion and a tiger?", correct: true },
+    { text: "Is a foal the little donkey?", correct: false },
+    { text: "Is a ruler straight in shape?", correct: true },
+    { text: "Are the wolf and the jackal parts of the cat family?", correct: false },
+    { text: "Are llamas covered in heavy wool?", correct: true },
+    { text: "Are bottles, baskets, and cassettes made of plastic?", correct: true },
+    { text: "Are frogs covered in skin?", correct: true },
+    { text: "Does a camel have a mane on its back?", correct: false },
+    { text: "Are the lion and tiger of the cat family?", correct: true },
+    { text: "Is the mule the most well-known crossbred animal?", correct: true },
+    { text: "Does Rama the cama have a hump on its back?", correct: false },
+    { text: "Is farmland a barren land where nothing or very little grows?", correct: false },
+    { text: "Does rainy weather help crops and plants to grow?", correct: true },
+    { text: "Is a mountain smaller than a hill?", correct: false },
+    { text: "Does a farmer use a boat to turn over the soil?", correct: false },
+    { text: "Are cats and dogs from the same family?", correct: false },
+    { text: "Is a mountain steeper and higher than a hill?", correct: true },
+    { text: "Is the opposite of left right?", correct: true },
+    { text: "Does holiday mean not being at work?", correct: true },
+    { text: "Does suckle mean making noise?", correct: false },
+    { text: "Does grazing mean chewing cud?", correct: false },
+    { text: "Is Rama a cross between a camel and tiger?", correct: false },
+    { text: "Is the book usually triangular?", correct: false },
+    { text: "Is a plough used to break up the soil?", correct: true },
+    { text: "Can you grow crops in a desert?", correct: false },
+    { text: "Is a stream bigger than a river?", correct: false },
+    { text: "Is the highest part of a mountain called 'peak'?", correct: true },
+    { text: "Are books made of pepper?", correct: false },
+    { text: "Is a plough always a machine used by a farmer?", correct: false },
+    { text: "Do we use kilometers to measure distance?", correct: true },
+    { text: "Is a mule a cross between a horse and a donkey?", correct: true },
+    { text: "Does 'suckle' mean to feed from the mother?", correct: true },
+    { text: "Is a little horse called a mare?", correct: false },
+    { text: "Is a foal the baby of the horse?", correct: true },
+    { text: "Are curtains pieces of cloth at the window to stop people looking in?", correct: true },
+    { text: "Does 'grazing' mean turning over the soil?", correct: false },
+    { text: "Is a claw on a chicken's mouth?", correct: false },
+    { text: "Is a chicken's beak its mouth?", correct: true },
+    { text: "Does 'cackling' mean 'making a noise'?", correct: true },
+    { text: "Does 'make out' mean 'to see clearly'?", correct: true },
+    { text: "Does the word 'main' mean 'most important or biggest'?", correct: true },
+    { text: "Is a coast road a road near the sea?", correct: true },
+    { text: "Is crossbreed when two different animals make a new animal?", correct: true },
+    { text: "Is a four-sided figure all of the same length called a square?", correct: true },
+    { text: "Is a figure that has three lines and three angles called a rectangle?", correct: false },
+    { text: "Is a river a number of streams meeting or coming together?", correct: true },
+    { text: "Is a place where very little or nothing grows called farmland?", correct: false },
+    { text: "Do we say 'calm down' when somebody is upset and talking loudly?", correct: true },
+    { text: "Does 'chewing the cud' mean chewing the food that was eaten before?", correct: true },
+    { text: "Does 'not being at work' mean working?", correct: false },
+    { text: "Is a hill smaller than a mountain?", correct: true },
+    { text: "Do we say 'Oh, dear' to tell somebody bad news?", correct: false },
+    { text: "Is a forest a very large wood?", correct: true },
+    { text: "Do antonyms mean words with the opposite meaning?", correct: true },
+    { text: "Is the crust the hard rock surface of the earth?", correct: true },
+    { text: "Is a volcano a valley with a hole in the top?", correct: false },
+    { text: "Does loss of life mean death?", correct: true },
+    { text: "Is an epidemic an illness that affects many people?", correct: true },
+    { text: "Are commence and begin antonyms?", correct: false },
+    { text: "Is a hurricane a powerful storm with strong winds?", correct: true },
+    { text: "Is an event that causes great damage called disaster?", correct: true },
+    { text: "Is wed the opposite of marry?", correct: false },
+    { text: "Are 'commence' and 'finish' synonyms?", correct: false },
+    { text: "Is a headline a few words saying what the report below it is about?", correct: true },
+    { text: "Does tore have the same meaning as pulled?", correct: true },
+    { text: "Is a nightmare a brilliant and quiet dream?", correct: false },
+    { text: "Is 'to find the size of something' to measure?", correct: true },
+    { text: "Is exhausted the opposite of tired?", correct: false },
+    { text: "Is well-dressed the antonym of scruffy?", correct: true },
+    { text: "Is a famine an illness that spreads quickly?", correct: false },
+    { text: "Is a forest fire difficult to control?", correct: true },
+    { text: "Is the earth's crust divided into plates?", correct: true },
+    { text: "Does recover mean getting back to normal health?", correct: true },
+    { text: "Is the early part of a person's life called manhood?", correct: false },
+    { text: "Is a very bad dream a nightmare?", correct: true },
+    { text: "Is the place where two plates meet called a river?", correct: false },
+    { text: "During a famine, do people starve?", correct: true },
+    { text: "Could flooded mean overwhelmed?", correct: true },
+    { text: "Are antonyms words with the same meaning?", correct: false },
+    { text: "Are less and more synonyms?", correct: false },
+    { text: "Is a flood deep water over normally dry land?", correct: true },
+    { text: "Are synonyms words with the same meaning?", correct: true },
+    { text: "Do acids turn litmus paper red?", correct: true },
+    { text: "Is acid a substance that has a sharp or sour taste?", correct: true },
+    { text: "Does the pH scale measure the strength of an acid or alkali?", correct: true },
+    { text: "Is a base a substance that does not react with acids to produce salts?", correct: false },
+    { text: "Are alkalis bases that dissolve in water?", correct: true },
+    { text: "Is litmus a vegetable dye for testing the acidity of solutions?", correct: true },
+    { text: "Is acid rain rain that contains acids?", correct: true },
+    { text: "Do lemon and orange juice contain sulphuric acid?", correct: false },
+    { text: "Does acid rain pollute lakes and kill fish?", correct: true },
+    { text: "Does the word acid come from Arabic?", correct: false },
+    { text: "Is a bee sting alkaline?", correct: false },
+    { text: "Does a car battery contain sulphuric acid?", correct: true },
+    { text: "Is a wasp sting acidic?", correct: false },
+    { text: "Do acids have a pH value below 7?", correct: true },
+    { text: "Do alkalis have a pH value above 7?", correct: true },
+    { text: "Do alkalis turn green litmus green?", correct: false },
+    { text: "Does distilled water have a neutral pH value?", correct: true },
+    { text: "Do most plants prefer soil that is very acidic?", correct: false },
+    { text: "Is baking powder bicarbonate of soda?", correct: true },
+    { text: "Is the chemical formula of calcium hydroxide NaHCO3?", correct: false },
+    { text: "Does the word 'eat away' mean corrode?", correct: true },
+    { text: "Does 'alkali' mean the ashes of a plant?", correct: true },
+    { text: "Is the word 'alkali' from Arabic?", correct: true },
+    { text: "Does vinegar contain lactic acid?", correct: false },
+    { text: "Does soap have a pH value of 9.5?", correct: true },
+    { text: "Is CO2 the chemical formula of water?", correct: false },
+    { text: "Is Ca(OH)2 the chemical formula of calcium hydroxide?", correct: true },
+    { text: "Is lime calcium hydroxide?", correct: true },
+    { text: "Is baking powder a common alkali?", correct: true },
+    { text: "Is acidic an adjective of the word acid?", correct: true },
+    { text: "Do solids have a fixed shape?", correct: true },
+    { text: "Does water come in four states?", correct: false },
+    { text: "Is steam the gaseous form of water?", correct: true },
+    { text: "In gases, do particles move freely?", correct: true },
+    { text: "Is water the only substance that is easy to find in three states?", correct: true },
+    { text: "Does 'steam' mean silver?", correct: false },
+    { text: "Are clouds formed by evaporation?", correct: true },
+    { text: "Do particles move hardly in glasses?", correct: false },
+    { text: "Is matter made up of particles that are always in motion?", correct: true },
+    { text: "Do gases need to be kept in tight containers?", correct: true },
+    { text: "Is matter any material found in the universe?", correct: true },
+    { text: "Are the different forms of matter solid, liquid and gas?", correct: true },
+    { text: "Does matter describe what things are made of?", correct: true },
+    { text: "Is gas a state of matter in which the particles are moving about quickly?", correct: true },
+    { text: "Is 'liquid' the state where particles have room to change places?", correct: true },
+    { text: "Is gas a state of matter in which the particles are closed together?", correct: false },
+    { text: "In gas, can the particles fill any space?", correct: true },
+    { text: "Does the kinetic theory state that the particles of matter are always in motion?", correct: true },
+    { text: "Does the kinetic theory state that light is a combination of both particles and waves?", correct: false },
+    { text: "When nouns are used as adjectives, are they always singular?", correct: true },
+    { text: "Is the most common way to see things by refraction?", correct: false },
+    { text: "Can light waves travel through a vacuum, such as outer space?", correct: true },
+    { text: "Are particles small pieces of matter?", correct: true },
+    { text: "Does 'fixed' mean changing?", correct: false },
+    { text: "Does a newspaper headline say in a few words what the report below it is about?", correct: true },
+    { text: "Are synonyms words with opposite meaning?", correct: false },
+    { text: "Are 'artifacts' things made by human beings?", correct: true },
+    { text: "Is a diligent person a very persevering and hard working person?", correct: true },
+    { text: "Is 'telescope' the instrument used to measure earthquakes?", correct: false },
+    { text: "Is a painkiller the medicine used for reducing pain?", correct: true },
+    { text: "Does 'weed' mean to marry?", correct: false },
+    { text: "Are start and commence antonyms?", correct: false },
+    { text: "Are well dressed and scruffy antonyms?", correct: true },
+    { text: "Is word formation forming a new word by adding a prefix, suffix or compound?", correct: true },
+    { text: "Does 'unpunished' mean punished?", correct: false },
+    { text: "Does 'exhausted' mean very tired?", correct: true },
+    { text: "Does 'sensible' mean good or clever?", correct: true },
+    { text: "Is a microwave a cooker that cooks things slowly?", correct: false },
+    { text: "Does 'exploits' mean adventures?", correct: true },
+    { text: "Is an evergreen a plant that is always green?", correct: true },
+    { text: "Does 'neatly' mean untidy?", correct: false },
+    { text: "Does 'a sweetheart' mean someone you love?", correct: true },
+    { text: "Does 'a turbine' mean generator?", correct: true },
+    { text: "Does 'fog' mean mist?", correct: true },
+    { text: "Is a famine a shortage of food?", correct: true },
+    { text: "Is a frog covered in scales?", correct: false },
+    { text: "Does 'fall down' mean build?", correct: false },
+    { text: "Is childhood the early part of a person's life?", correct: true },
+    { text: "Does 'uncommon' mean rare?", correct: true },
+    { text: "Does 'watch carefully' mean observe?", correct: true },
+    { text: "Is an ambulance a motor vehicle for taking injured people to hospitals?", correct: true },
+    { text: "Is a nightmare a good dream?", correct: false },
+    { text: "Does 'awful' mean very bad?", correct: true },
+    { text: "Does 'calm down' mean stop being excited?", correct: true },
+    { text: "Does 'brilliant' mean very bad?", correct: false },
+    { text: "Is a disaster an event that causes great damage?", correct: true },
+    { text: "Is a forest fire very difficult to control because it spreads quickly?", correct: true },
+    { text: "Is a drought a water shortage after a long period with no rain?", correct: true },
+    { text: "Does a flash flood happen very quickly, such as in a wadi?", correct: true },
+    { text: "Is a volcanic eruption the sudden burst of molten rocks?", correct: true },
+    { text: "Is a famine a shortage of water?", correct: false },
+    { text: "Does 'starve' mean die of hunger?", correct: true },
+    { text: "Are plates divisions of the earth's crust into several sections?", correct: true },
+    { text: "Does an earthquake happen when two plates move along a fault line?", correct: true },
+    { text: "Does 'tore' mean pulled?", correct: true },
+    { text: "Is a plantation land planted with trees or a crop?", correct: true },
+    { text: "Does 'flattened' mean blown down to the ground?", correct: true },
+    { text: "Is a landslide earth slipping down a mountain or cliff?", correct: true },
+    { text: "Do we say Yes/No questions with rising intonation?", correct: true },
+    { text: "Do we say Wh-questions with falling intonation?", correct: true },
+    { text: "Does 'several' mean few?", correct: false },
+    { text: "Does the Richter scale measure the strength of an earthquake?", correct: true },
+    { text: "Is 'more than 8.0' the strongest point on the Richter scale?", correct: true },
+    { text: "Are news flashes short pieces of important news?", correct: true },
+    { text: "Is light a form of energy?", correct: true },
+    { text: "Is reflection the change of light direction when it meets/hits a surface?", correct: true },
+    { text: "Is refraction the bending of light waves when they pass between media?", correct: true },
+    { text: "Are lenses specially-shaped pieces of glass that refract light?", correct: true },
+    { text: "Is a convex lens thicker in the middle than the edges?", correct: true },
+    { text: "Is a concave lens thinner in the middle than the edges?", correct: true },
+    { text: "Is the angle of incidence the same as the angle of reflection?", correct: true },
+    { text: "Does a rough surface scatter light?", correct: true },
+    { text: "Is sound created by something vibrating?", correct: true },
+    { text: "Is decibel (dB) a unit for measuring loudness of sound?", correct: true },
+    { text: "Is hertz (Hz) a unit for measuring frequency?", correct: true },
+    { text: "Is ultrasonic sound beyond human hearing range?", correct: true },
+    { text: "Do we use cubic meter to measure length?", correct: false },
+    { text: "Is kilogram (kg) a unit for measuring weight?", correct: true },
+    { text: "Can sound waves travel through a vacuum?", correct: false },
+    { text: "Does 'beyond sound' mean ultrasonic?", correct: true },
+    { text: "Do we add a prefix to the end of a word?", correct: false },
+    { text: "Is the origin of igloo French?", correct: false },
+    { text: "Is the adjective of south 'southern'?", correct: true },
+    { text: "Is the word 'workshop' a compound word?", correct: true },
+    { text: "Does the prefix 'un' make 'happy' negative?", correct: true },
+    { text: "Is 'to rewrite' to write again?", correct: true }
+  ];
+
+  const QUESTIONS = FULL_SET;
+  const TOTAL_QS = QUESTIONS.length;
+  const PER_PAGE = 25;
+  const TOTAL_PAGES = Math.ceil(TOTAL_QS / PER_PAGE);
+
+  let pagesData = [];
+  for (let i = 0; i < TOTAL_PAGES; i++) {
+    pagesData.push(QUESTIONS.slice(i * PER_PAGE, (i + 1) * PER_PAGE));
+  }
+
+  let userAnswers = pagesData.map(p => new Array(p.length).fill(null));
+  let currentPage = 0;
+  let soundEnabled = true;
+
+  // ========== LICENSE SYSTEM ==========
+  function showLicenseIfNeeded() {
+    const hasAccepted = localStorage.getItem('quiz_license_accepted');
+    if (hasAccepted === 'true') return;
+    
+    const modalDiv = document.getElementById('licenseModal');
+    modalDiv.innerHTML = `
+      <div class="license-overlay">
+        <div class="license-card">
+          <h2>📜 رخصة الاستخدام البسيطة</h2>
+          <p><strong>المطور:</strong> حسن الجبوبي (Hassan Aljaboobj)</p>
+          <p><strong>البريد الإلكتروني:</strong> hassan.jabobi@gmail.com</p>
+          <hr>
+          <p>✅ <strong>مسموح بـ:</strong><br>
+          - الاستخدام الشخصي والتعليمي.<br>
+          - مشاركة التطبيق مع الطلاب والزملاء داخل الفصل الدراسي.</p>
+          <p>❌ <strong>غير مسموح بـ:</strong><br>
+          - نسخ الكود أو تعديله أو إعادة نشره.<br>
+          - بيع التطبيق أو استخدامه تجارياً بأي شكل.<br>
+          - نسب التطبيق لشخص آخر غير المطور الأصلي.</p>
+          <hr>
+          <p>⚠️ بالضغط على "موافق"، أنت توافق على جميع الشروط أعلاه.</p>
+          <button class="license-accept-btn" id="acceptLicenseBtn">✅ موافق وأدخل التطبيق</button>
+        </div>
+      </div>
+    `;
+    modalDiv.style.display = 'block';
+    
+    document.getElementById('acceptLicenseBtn').addEventListener('click', () => {
+      localStorage.setItem('quiz_license_accepted', 'true');
+      modalDiv.style.display = 'none';
+    });
+  }
+
+  // ========== SOUND FUNCTIONS ==========
+  function playCorrectSound() {
+    if (!soundEnabled) return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      osc.type = "sine";
+      gain.gain.value = 0.2;
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+      osc.stop(ctx.currentTime + 0.5);
+      if (ctx.state === "suspended") ctx.resume();
+    } catch(e) {}
+  }
+
+  function playWrongSound() {
+    if (!soundEnabled) return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 520;
+      osc.type = "sawtooth";
+      gain.gain.value = 0.35;
+      osc.start();
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.0);
+      osc.stop(ctx.currentTime + 1.0);
+      if (ctx.state === "suspended") ctx.resume();
+    } catch(e) {}
+  }
+
+  function computePageScore(pIdx) {
+    let correct = 0;
+    for (let i = 0; i < pagesData[pIdx].length; i++) {
+      const ans = userAnswers[pIdx][i];
+      if (ans !== null && ans === pagesData[pIdx][i].correct) correct++;
+    }
+    return correct;
+  }
+
+  function computeGlobalScore() {
+    let total = 0;
+    for (let i = 0; i < TOTAL_PAGES; i++) total += computePageScore(i);
+    return total;
+  }
+
+  function updateCardColor(pageIdx, qIdx) {
+    const card = document.querySelector(`.page[data-page='${pageIdx}'] .q-card[data-idx='${qIdx}']`);
+    if (!card) return;
+    const ans = userAnswers[pageIdx][qIdx];
+    const isCorrect = (ans !== null && ans === pagesData[pageIdx][qIdx].correct);
+    card.classList.remove('correct', 'wrong');
+    if (ans === null) return;
+    if (isCorrect) card.classList.add('correct');
+    else card.classList.add('wrong');
+  }
+
+  function updateDisplay(pageIdx) {
+    const pageDiv = document.querySelector(`.page[data-page='${pageIdx}']`);
+    if (pageDiv) {
+      const scoreSpan = pageDiv.querySelector('.page-score-val');
+      if (scoreSpan) scoreSpan.innerText = `${computePageScore(pageIdx)} / ${pagesData[pageIdx].length}`;
+    }
+    document.getElementById('globalScoreSpan').innerText = `🏆 Total: ${computeGlobalScore()} / ${TOTAL_QS}`;
+  }
+
+  function renderPage(pIdx) {
+    const pageDiv = document.createElement('div');
+    pageDiv.className = 'page';
+    if (pIdx === currentPage) pageDiv.classList.add('active-page');
+    pageDiv.setAttribute('data-page', pIdx);
+    let html = `<div class="questions-wrapper">`;
+    pagesData[pIdx].forEach((q, idx) => {
+      const selected = userAnswers[pIdx][idx];
+      let extraClass = '';
+      if (selected !== null) extraClass = (selected === q.correct) ? 'correct' : 'wrong';
+      const yesChecked = selected === true ? 'checked' : '';
+      const noChecked = selected === false ? 'checked' : '';
+      html += `
+        <div class="q-card ${extraClass}" data-idx="${idx}">
+          <div class="q-text">${pIdx * PER_PAGE + idx + 1}. ${escapeHtml(q.text)}</div>
+          <div class="options">
+            <label class="opt"><input type="radio" name="q_${pIdx}_${idx}" value="yes" ${yesChecked}> ✅ Yes</label>
+            <label class="opt"><input type="radio" name="q_${pIdx}_${idx}" value="no" ${noChecked}> ❌ No</label>
+          </div>
+        </div>
+      `;
+    });
+    const pageScore = computePageScore(pIdx);
+    html += `</div><div class="page-footer">
+      <div class="page-score">📊 Page score: <span class="page-score-val">${pageScore} / ${pagesData[pIdx].length}</span></div>
+      <div>
+        ${pIdx > 0 ? '<button class="nav-btn" data-prev>◀ Previous</button>' : ''}
+        ${pIdx < TOTAL_PAGES - 1 ? '<button class="nav-btn" data-next>Next ▶</button>' : '<button class="nav-btn" data-finish>🏆 Final Result</button>'}
+      </div>
+    </div>`;
+    pageDiv.innerHTML = html;
+    return pageDiv;
+  }
+
+  function attachEvents() {
+    for (let p = 0; p < TOTAL_PAGES; p++) {
+      const container = document.querySelector(`.page[data-page='${p}']`);
+      if (!container) continue;
+      for (let q = 0; q < pagesData[p].length; q++) {
+        const yesRadio = container.querySelector(`input[name="q_${p}_${q}"][value="yes"]`);
+        const noRadio = container.querySelector(`input[name="q_${p}_${q}"][value="no"]`);
+        const handler = () => {
+          let newVal = null;
+          if (yesRadio.checked) newVal = true;
+          else if (noRadio.checked) newVal = false;
+          if (newVal !== userAnswers[p][q]) {
+            userAnswers[p][q] = newVal;
+            if (newVal !== null) {
+              if (newVal === pagesData[p][q].correct) playCorrectSound();
+              else playWrongSound();
+            }
+            updateCardColor(p, q);
+            updateDisplay(p);
+          }
+        };
+        if (yesRadio) yesRadio.addEventListener('change', handler);
+        if (noRadio) noRadio.addEventListener('change', handler);
+      }
+      const prevBtn = container.querySelector('[data-prev]');
+      const nextBtn = container.querySelector('[data-next]');
+      const finishBtn = container.querySelector('[data-finish]');
+      if (prevBtn) prevBtn.addEventListener('click', () => changePage(p - 1));
+      if (nextBtn) nextBtn.addEventListener('click', () => changePage(p + 1));
+      if (finishBtn) finishBtn.addEventListener('click', showFinalResult);
+    }
+  }
+
+  function changePage(newIdx) {
+    if (newIdx >= 0 && newIdx < TOTAL_PAGES) {
+      currentPage = newIdx;
+      updatePageVisibility();
+      rebuildNavButtons();
+    }
+  }
+
+  function updatePageVisibility() {
+    for (let i = 0; i < TOTAL_PAGES; i++) {
+      const page = document.querySelector(`.page[data-page='${i}']`);
+      if (page) {
+        if (i === currentPage) page.classList.add('active-page');
+        else page.classList.remove('active-page');
+      }
+    }
+    document.querySelectorAll('.page-btn').forEach((btn, idx) => {
+      if (idx === currentPage) btn.classList.add('active');
+      else btn.classList.remove('active');
+    });
+  }
+
+  function rebuildNavButtons() {
+    const container = document.getElementById('pageButtons');
+    let btns = '';
+    for (let i = 0; i < TOTAL_PAGES; i++) {
+      btns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" data-nav-page="${i}">📖 ${i+1}</button>`;
+    }
+    container.innerHTML = btns;
+    for (let i = 0; i < TOTAL_PAGES; i++) {
+      const btn = document.querySelector(`[data-nav-page="${i}"]`);
+      if (btn) btn.addEventListener('click', () => { currentPage = i; updatePageVisibility(); rebuildNavButtons(); });
+    }
+  }
+
+  function renderAllPages() {
+    const root = document.getElementById('pagesContainer');
+    root.innerHTML = '';
+    for (let i = 0; i < TOTAL_PAGES; i++) root.appendChild(renderPage(i));
+    attachEvents();
+    rebuildNavButtons();
+    updateDisplay(currentPage);
+  }
+
+  function showFinalResult() {
+    const total = computeGlobalScore();
+    const percent = (total / TOTAL_QS) * 100;
+    let message = '';
+    if (total === TOTAL_QS) message = '🏅 PERFECT SCORE! ABSOLUTE MASTERY! 🏅';
+    else if (percent >= 85) message = '🌟 EXCELLENT! YOU HAVE GREAT KNOWLEDGE! 🌟';
+    else if (percent >= 70) message = '👍 VERY GOOD! KEEP LEARNING! 👍';
+    else if (percent >= 50) message = '📚 GOOD EFFORT! REVIEW AND TRY AGAIN.';
+    else message = '💪 COURAGE! EVERY MISTAKE MAKES YOU STRONGER!';
+
+    const finalDiv = document.getElementById('finalResultArea');
+    finalDiv.innerHTML = `
+      <div class="final-panel">
+        <h2>🏁 FINAL RESULT 🏁</h2>
+        <div class="final-score">${total} / ${TOTAL_QS}</div>
+        <div style="margin: 10px 0;">📊 ${percent.toFixed(1)}% ACCURACY</div>
+        <div style="margin: 15px 0;">${message}</div>
+        <button id="restartQuizBtn" style="background:#dc4c2c; border:none; color:white; padding:10px 30px; border-radius:40px; font-weight:bold;">🔄 RESTART QUIZ</button>
+      </div>
+    `;
+    document.getElementById('restartQuizBtn')?.addEventListener('click', () => {
+      userAnswers = pagesData.map(p => new Array(p.length).fill(null));
+      renderAllPages();
+      finalDiv.innerHTML = '';
+      currentPage = 0;
+      updatePageVisibility();
+      rebuildNavButtons();
+    });
+    finalDiv.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+  }
+
+  const soundToggle = document.getElementById('soundToggleBtn');
+  soundToggle.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    soundToggle.innerText = soundEnabled ? "🔊 Sound ON" : "🔇 Sound OFF";
+  });
+
+  showLicenseIfNeeded();
+  renderAllPages();
+</script>
+</body>
+</html>
